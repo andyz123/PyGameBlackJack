@@ -29,7 +29,7 @@ class Deck:
     def shuffle(self):
         random.shuffle(self.deck)
 
-    # Deals a card and adjusts for ace, if any.
+    # Deals a card by removing a card from the Deck.
     def deal(self):
         is_empty = False
         if len(self.deck) == 0:
@@ -44,6 +44,7 @@ class Hand:
         self.value = 0
         self.aces = 0
 
+    # Adds a card to the hand and adjust for aces if value is above 21
     def add_card(self, card):
         self.cards.append(card)
         self.value += values[card.rank]
@@ -53,6 +54,7 @@ class Hand:
             self.value -= 10
             self.aces -= 1
 
+# These are values used to create the cards and color scheme respectively. 
 ########################################################################################
 
 suits = ('diamonds', 'clubs', 'hearts', 'spades')
@@ -62,6 +64,7 @@ values = {'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5,
             'Nine': 9, 'Ten': 10, 'Jack': 10,
             'Queen': 10, 'King': 10, 'Ace': 11}
 
+# Color in (R,G,B) format
 WHITE = (255,255,255)
 GREEN = (65,151,0)
 BLACK = (0,0,0)
@@ -69,13 +72,16 @@ RED = (209, 152, 140)
 
 ##########################################################################################
 
+# Used to add text to the game when needed.
 def add_text(text, font, surface, x, y, color):
     textobject = font.render(text, 1, color)
     textrect = textobject.get_rect()
     textrect.topleft = (x,y)
     surface.blit(textobject, textrect)
     
+
 def game_over():
+    # Creates the screen when player goes bankrupt.
     pygame.init()
     screen = pygame.display.set_mode((1280,720))
     gameover = pygame.image.load('image/gameoverimage.jpg')
@@ -91,7 +97,9 @@ def game_over():
                 pygame.quit()
                 sys.exit()
 
+
 def play():
+    # Creates the first screen the player sees.
     pygame.init()
     gamex, gamey = (1280, 720)
     screen = pygame.display.set_mode((gamex, gamey))
@@ -104,6 +112,7 @@ def play():
     screen.fill(RED)
     screen.blit(banner, (50,0))
     screen.blit(playButton, (850, 300))
+    # Game instructions.
     add_text('Welcome to Pygame Blackjack! I hope you enjoy your stay.', font, screen, 20, 290, BLACK)
     add_text('Here are some rules and guidelines for you to follow:', font, screen, 20, 330, BLACK)
     add_text(' * At this table, you are only allowed $100 worth of chips.', font, screen, 20, 370, BLACK)
@@ -120,6 +129,7 @@ def play():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            # If player presses the play button, game begins.
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if playRect.collidepoint(event.pos):
@@ -133,6 +143,7 @@ def play():
 # Asks player how much they would like to bet.
 def take_bet(chips, player, dealer, deck):
     pygame.init()
+    # Displays the screen that asks player to pick their betting amounts.
     screen = pygame.display.set_mode((1280,720))
     pygame.display.set_caption('Pygame Blackjack! - Place your bets!')
     image = pygame.image.load('image/betimage.jpg')
@@ -177,6 +188,7 @@ def take_bet(chips, player, dealer, deck):
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            # Checks to see if the player has enough to make that bet.
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if bet5Rect.collidepoint(event.pos):
@@ -199,7 +211,7 @@ def take_bet(chips, player, dealer, deck):
                         if chips >= 100:
                             bet = 100
                             betsPlaced = True
-
+    # When player successfully placed a bet, cards are dealt, and game begins.                          
     while betsPlaced is True:
         deck = Deck()
         deck.shuffle()
@@ -225,6 +237,7 @@ def play_hand(bet, chips, player, dealer, deck):
     add_text('Player: ', font, screen, 50, 310, WHITE)
     add_text('Dealer: ', font, screen, 400, 10, WHITE)
     pcardx, pcardy = (50, 340)
+    # Load the card images into the game.
     for card in player.cards:
         pic = pygame.image.load('Playing Cards/'+ str(card) + '.png')
         screen.blit(pic, (pcardx,pcardy))
@@ -240,6 +253,7 @@ def play_hand(bet, chips, player, dealer, deck):
     doublePrize = False
     dealerBust = False
     playerBust = False
+    # Checks if either the player or dealer has Blackjack.
     if player.value == 21:
         add_text('Blackjack!!! You WIN!!', font, screen, 500, 360, BLACK)
         add_text('Press space to continue', font, screen, 500, 410, BLACK)
@@ -257,11 +271,13 @@ def play_hand(bet, chips, player, dealer, deck):
     playerWins = False
     dealerWins = False
     push = False
+
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            # Game logic to allow to allow button presses on keyboard. 
             if event.type == KEYDOWN:
                 if event.key == K_SPACE and doublePrize is True:
                     del player.cards[:]
@@ -304,6 +320,7 @@ def play_hand(bet, chips, player, dealer, deck):
                     screen.blit(pygame.image.load('Playing Cards/' + str(dealer.cards[1]) + '.png'), (dcardx, dcardy))
                     pygame.display.update()
                     stand = True
+                    # Win conditions
                     while dealer.value < 17 and stand is True and handDone is False:
                         add_text('Dealer is drawing . . .', font, screen, 500, 335, BLACK)
                         sleep(2)
