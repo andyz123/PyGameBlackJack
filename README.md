@@ -2,7 +2,7 @@
 I was inspired to take my text-based Blackjack game to the next level and re-wrote the game using Pygame. Originally, the game was only played in the terminal, but with the Pygame library, I'm able to create the game in 2D.
 # Gameplay
 So to begin, make sure you have the pygame library installed. If you haven't already, you can run ``pip install pygame``.
-When the game is initialize, this is the first screen that shows up.
+When the game is initialized, this is the first screen that shows up.
 ![startscreen](screenshots/Start.png)
 Essentially, it's the instructions on the left, the play button on the right.
 
